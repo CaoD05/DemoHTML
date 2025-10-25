@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Library Management — Demo</title>
+<style>
+/* ---------- Base ---------- */
+:root{
+  --bg:#f6fbf9;
+  --card:#ffffff;
+  --muted:#5b6b66;
+  --accent:#10A37F;
+  --accent-700:#0e8a6b;
+  --border:#e6eeea;
+  --danger:#e05b5b;
+  --glass: rgba(255,255,255,0.75);
+  --radius:12px;
+  --mono: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--mono);
+  background: linear-gradient(180deg,#f7fcfb, #eef7f4);
+  color:#1b2b28;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:28px;
+}
+
+/* ---------- Layout ---------- */
+.app {
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap:20px;
+  max-width:1200px;
+  margin: 0 auto;
+  align-items:start;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--card);
+  padding:18px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  box-shadow: 0 6px 20px rgba(16,163,127,0.06);
+  height: calc(100vh - 100px);
+  position:sticky;
+  top:28px;
+}
+.logo{
+  display:flex; gap:12px; align-items:center; margin-bottom:12px;
+}
+.logo .dot{width:36px;height:36px;border-radius:10px;background:var(--accent);display:inline-block}
+h1{font-size:16px;margin:0}
+.nav{
+  margin-top:16px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.nav button{
+  text-align:left;
+  border:0; background:transparent; padding:10px 12px; border-radius:8px;
+  cursor:pointer; color:var(--muted); font-weight:600;
+}
+.nav button.active{ background:linear-gradient(90deg,var(--accent),var(--accent-700)); color:#fff; box-shadow:0 6px 12px rgba(16,163,127,0.12)}
+
+/* ---------- Main ---------- */
+.main{
+  min-height:600px;
+}
+.header{
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;
+}
+.header .title{font-size:20px; font-weight:700}
+.controls{display:flex; gap:8px}
+.btn{
+  border:0; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:600;
+  background:var(--accent); color:white;
+}
+.btn.ghost{ background:transparent; border:1px solid var(--border); color:var(--muted)}
+.card{
+  background:var(--card); padding:16px; border-radius:12px; border:1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(11,20,18,0.02);
+}
+
+/* ---------- Grid for content ---------- */
+.grid{ display:grid; gap:16px; grid-template-columns: repeat(2, 1fr); }
+.grid-full{ grid-column: 1 / -1; }
+
+/* ---------- Tables ---------- */
+.table{
+  width:100%; border-collapse:collapse; font-size:14px;
+}
+.table th, .table td{
+  padding:10px 8px; border-bottom:1px solid #f1f6f3; text-align:left;
+}
+.table th{ color:var(--muted); font-weight:700; font-size:13px}
+.row-actions button{ margin-right:6px; border:0; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:13px}
+.badge{ display:inline-block; padding:6px 8px; border-radius:999px; font-weight:700; font-size:12px}
+.badge.available{ background:#e8f8f3; color:var(--accent-700)}
+.badge.loaned{ background:#fff4e6; color:#b66f0b}
+.badge.locked{ background:#fdecec; color:var(--danger)}
+
+/* ---------- Forms ---------- */
+.form-row{ display:flex; gap:8px; margin-top:8px; align-items:center}
+.input, select{
+  padding:8px 10px; border-radius:8px; border:1px solid var(--border); font-size:14px; min-width:0;
+}
+.form-inline{ display:flex; gap:8px; align-items:center; margin-bottom:8px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .app{ grid-template-columns: 1fr; padding:12px }
+  .sidebar{ position:static; height:auto; margin-bottom:12px }
+  .grid{ grid-template-columns: 1fr }
+}
+
+/* tiny helpers */
+.small{ font-size:13px; color:var(--muted) }
+.footer{ margin-top:10px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar card">
+    <div class="logo">
+      <span class="dot"></span>
+      <div>
+        <h1>Library Demo</h1>
+        <div class="small">Quản lý thư viện — front-end</div>
+      </div>
+    </div>
+
+    <nav class="nav" role="navigation" aria-label="Main">
+      <button class="active" data-page="dashboard">Dashboard</button>
+      <button data-page="books">Book Copies</button>
+      <button data-page="loans">Loan Records</button>
+      <button data-page="accounts">Library Accounts</button>
+      <!--
+      <button data-page="crc">CRC Cards</button>
+      -->
+    </nav>
+
+    <div class="footer">
+      <div class="small">Demo only — no backend</div>
+  <div class="small" style="margin-top:8px">
+    <button class="btn ghost" style="width:100%; padding:8px; font-size:14px;" onclick="logout()">Logout</button>
+  </div>
+
+  </aside>
+
+  <main class="main">
+    <!-- Dashboard -->
+    <section id="dashboard" class="page card">
+      <div class="header">
+        <div>
+          <div class="title">Dashboard</div>
+          <div class="small">Overview of the library state</div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="seedSample()">Load sample data</button>
+          <button class="btn ghost" onclick="clearAll()">Clear</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div style="font-weight:800">Books</div>
+          <div class="small" id="stat-books">0 total</div>
+          <div style="margin-top:12px">
+            <div class="small">Available: <span id="stat-available">0</span></div>
+            <div class="small">Loaned: <span id="stat-loaned">0</span></div>
+            <div class="small">Maintenance / Lost: <span id="stat-other">0</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800">Loans & Accounts</div>
+          <div class="small" id="stat-loans">0 loans</div>
+          <div class="small" id="stat-accounts">0 accounts</div>
+        </div>
+
+        <div class="card grid-full">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:800">Quick actions</div>
+            <div class="small">Client-side demo</div>
+          </div>
+
+          <div style="margin-top:12px" class="form-inline">
+            <input id="quick-book" class="input" placeholder="Title — e.g. 'Intro to PL'" />
+            <input id="quick-reader" class="input" placeholder="Reader name" />
+            <button class="btn" onclick="quickLoan()">Create loan</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Book Copies -->
+    <section id="books" class="page card" style="display:none">
+      <div class="header">
+        <div>
+          <div class="title">Book Copies</div>
+          <div class="small">Manage individual copies (status, maintenance, disposal)</div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="openForm('addBook')">Add Book Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <table class="table" aria-live="polite">
+          <thead>
+            <tr><th>Id</th><th>Title</th><th>Call No.</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="books-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="addBook" style="display:none; margin-top:12px" class="card">
+        <div style="font-weight:700">Add Book Copy</div>
+        <div class="form-row">
+          <input id="b-title" class="input" placeholder="Title" />
+          <input id="b-call" class="input" placeholder="Call number / barcode" />
+          <select id="b-status" class="input">
+            <option value="available">Available</option>
+            <option value="loaned">Loaned</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="lost">Lost</option>
+            <option value="retired">Retired</option>
+          </select>
+          <button class="btn" onclick="addBook()">Save</button>
+          <button class="btn ghost" onclick="closeForm('addBook')">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loan Records -->
+    <section id="loans" class="page card" style="display:none">
+      <div class="header">
+        <div>
+          <div class="title">Loan Records</div>
+          <div class="small">Track who borrowed which copy and due dates</div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="openForm('addLoan')">New Loan</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr><th>Id</th><th>Book</th><th>Reader</th><th>Due</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="loans-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="addLoan" style="display:none; margin-top:12px" class="card">
+        <div style="font-weight:700">Create Loan</div>
+        <div class="form-row" style="margin-top:8px">
+          <select id="loan-book" class="input"></select>
+          <input id="loan-reader" class="input" placeholder="Reader name" />
+          <input id="loan-due" class="input" type="date" />
+          <button class="btn" onclick="createLoan()">Create</button>
+          <button class="btn ghost" onclick="closeForm('addLoan')">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Library Accounts -->
+    <section id="accounts" class="page card" style="display:none">
+      <div class="header">
+        <div>
+          <div class="title">Library Accounts</div>
+          <div class="small">Manage reader accounts and status</div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="openForm('addAccount')">Add Account</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr><th>Id</th><th>Name</th><th>Status</th><th>Notes</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="accounts-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="addAccount" style="display:none; margin-top:12px" class="card">
+        <div style="font-weight:700">New Account</div>
+        <div class="form-row">
+          <input id="acct-name" class="input" placeholder="Reader name" />
+          <select id="acct-status" class="input">
+            <option value="active">Active</option>
+            <option value="locked">Temporarily locked</option>
+            <option value="expired">Expired</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button class="btn" onclick="createAccount()">Create</button>
+          <button class="btn ghost" onclick="closeForm('addAccount')">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRC Cards -->
+    <!--
+    <section id="crc" class="page card" style="display:none">
+      <div class="header">
+        <div>
+          <div class="title">CRC Cards (Quick view)</div>
+          <div class="small">Class — Responsibility — Collaboration</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div style="font-weight:800">Class: BookCopy</div>
+          <div class="small" style="margin-top:8px"><strong>Responsibilities</strong>
+            <ul>
+              <li>Quản lý trạng thái bản sách (available, loaned, maintenance, lost)</li>
+              <li>Ghi nhận mượn / trả / bảo trì / thanh lý</li>
+            </ul>
+          </div>
+          <div class="small"><strong>Collaborators</strong>
+            <ul><li>LoanRecord</li><li>LibraryAccount</li><li>Maintenance</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800">Class: LoanRecord</div>
+          <div class="small" style="margin-top:8px"><strong>Responsibilities</strong>
+            <ul>
+              <li>Quản lý hồ sơ mượn — due date, status</li>
+              <li>Xử lý gia hạn, trả, báo mất, tính phạt</li>
+            </ul>
+          </div>
+          <div class="small"><strong>Collaborators</strong>
+            <ul><li>BookCopy</li><li>LibraryAccount</li><li>FinePayment</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800">Class: LibraryAccount</div>
+          <div class="small" style="margin-top:8px"><strong>Responsibilities</strong>
+            <ul>
+              <li>Quản lý trạng thái tài khoản (active, locked, expired)</li>
+              <li>Xử lý phạt, khóa, gia hạn thẻ</li>
+            </ul>
+          </div>
+          <div class="small"><strong>Collaborators</strong>
+            <ul><li>LoanRecord</li><li>FinePayment</li><li>Admin</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:800">Class: FinePayment</div>
+          <div class="small" style="margin-top:8px"><strong>Responsibilities</strong>
+            <ul>
+              <li>Tính toán và ghi nhận tiền phạt</li>
+              <li>Xử lý thanh toán</li>
+            </ul>
+          </div>
+          <div class="small"><strong>Collaborators</strong>
+            <ul><li>LibraryAccount</li><li>LoanRecord</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    -->
+  </main>
+</div>
+
+<script>
+/* ---------- Simple in-memory demo data & UI logic ---------- */
+let books = [];
+let loans = [];
+let accounts = [];
+let idCounter = 1;
+
+function logout() {
+  // Optional: clear login session
+  sessionStorage.removeItem("loggedIn");
+
+  // Confirm and redirect to login.html
+  if (confirm("Are you sure you want to log out?")) {
+    window.location.href = "index.html";
+  }
+}
+
+
+function updateStats(){
+  document.getElementById('stat-books').textContent = books.length + ' total';
+  document.getElementById('stat-available').textContent = books.filter(b=>b.status==='available').length;
+  document.getElementById('stat-loaned').textContent = books.filter(b=>b.status==='loaned').length;
+  document.getElementById('stat-other').textContent = books.filter(b=>['maintenance','lost','retired'].includes(b.status)).length;
+  document.getElementById('stat-loans').textContent = loans.length + ' loans';
+  document.getElementById('stat-accounts').textContent = accounts.length + ' accounts';
+}
+
+function renderBooks(){
+  const tbody = document.getElementById('books-tbody');
+  tbody.innerHTML = '';
+  books.forEach(b=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${b.id}</td>
+      <td>${escapeHtml(b.title)}</td>
+      <td>${escapeHtml(b.callno||'-')}</td>
+      <td><span class="badge ${b.status==='available'?'available':b.status==='loaned'?'loaned':'locked'}">${b.status}</span></td>
+      <td class="row-actions">
+        <button onclick="startLoan(${b.id})">Loan</button>
+        <button onclick="editBook(${b.id})">Edit</button>
+        <button onclick="removeBook(${b.id})" style="color:${'#b33'}">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  // fill select for loans
+  const sel = document.getElementById('loan-book');
+  if(sel){
+    sel.innerHTML = '';
+    books.filter(b=>b.status!=='retired' && b.status!=='lost' && b.status!=='maintenance').forEach(b=>{
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = `[${b.id}] ${b.title}`;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function renderLoans(){
+  const tbody = document.getElementById('loans-tbody');
+  tbody.innerHTML = '';
+  loans.forEach(l=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${l.id}</td>
+      <td>${escapeHtml(bookTitle(l.bookId))}</td>
+      <td>${escapeHtml(l.reader)}</td>
+      <td>${l.due||'-'}</td>
+      <td>${l.status}</td>
+      <td class="row-actions">
+        <button onclick="returnLoan(${l.id})">Return</button>
+        <button onclick="markLost(${l.id})" style="color:${'#b33'}">Mark lost</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAccounts(){
+  const tbody = document.getElementById('accounts-tbody');
+  tbody.innerHTML = '';
+  accounts.forEach(a=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${a.id}</td>
+      <td>${escapeHtml(a.name)}</td>
+      <td>${a.status}</td>
+      <td>${escapeHtml(a.notes||'')}</td>
+      <td class="row-actions">
+        <button onclick="toggleLock(${a.id})">${a.status==='active'?'Lock':'Unlock'}</button>
+        <button onclick="closeAccount(${a.id})" style="color:${'#b33'}">Close</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* CRUD book */
+function openForm(id){ document.getElementById(id).style.display='block'; }
+function closeForm(id){ document.getElementById(id).style.display='none'; }
+function addBook(){
+  const title = document.getElementById('b-title').value.trim();
+  const callno = document.getElementById('b-call').value.trim();
+  const status = document.getElementById('b-status').value;
+  if(!title){ alert('Title required'); return; }
+  const obj = { id: idCounter++, title, callno, status };
+  books.push(obj);
+  document.getElementById('b-title').value=''; document.getElementById('b-call').value='';
+  closeForm('addBook');
+  renderBooks(); updateStats();
+}
+function editBook(id){
+  const b = books.find(x=>x.id===id);
+  const newTitle = prompt('Edit title', b.title);
+  if(newTitle!==null) b.title = newTitle;
+  renderBooks(); updateStats();
+}
+function removeBook(id){
+  if(!confirm('Delete this copy?')) return;
+  books = books.filter(x=>x.id!==id);
+  renderBooks(); updateStats();
+}
+
+/* Loans */
+function startLoan(bookId){
+  openForm('addLoan');
+  document.getElementById('loan-book').value = bookId;
+  document.getElementById('loan-reader').focus();
+}
+function createLoan(){
+  const bookId = Number(document.getElementById('loan-book').value);
+  const reader = document.getElementById('loan-reader').value.trim();
+  const due = document.getElementById('loan-due').value || '';
+  if(!reader){ alert('Reader required'); return; }
+  const book = books.find(b=>b.id===bookId);
+  if(!book){ alert('Book not found'); return; }
+  const loan = { id: idCounter++, bookId, reader, due, status: 'open' };
+  loans.push(loan);
+  book.status = 'loaned';
+  document.getElementById('loan-reader').value=''; document.getElementById('loan-due').value='';
+  closeForm('addLoan'); renderLoans(); renderBooks(); updateStats();
+}
+function quickLoan(){
+  const t = document.getElementById('quick-book').value.trim();
+  const r = document.getElementById('quick-reader').value.trim();
+  if(!t || !r){ alert('Provide Title and Reader'); return; }
+  // create book + loan
+  const book = { id: idCounter++, title: t, callno: '', status:'loaned' };
+  books.push(book);
+  loans.push({ id: idCounter++, bookId:book.id, reader:r, due:'', status:'open' });
+  document.getElementById('quick-book').value=''; document.getElementById('quick-reader').value='';
+  renderBooks(); renderLoans(); updateStats();
+}
+function returnLoan(loanId){
+  const loan = loans.find(l=>l.id===loanId);
+  if(!loan) return;
+  loan.status = 'returned';
+  const b = books.find(x=>x.id===loan.bookId);
+  if(b) b.status = 'available';
+  renderLoans(); renderBooks(); updateStats();
+}
+function markLost(loanId){
+  if(!confirm('Mark this loan as lost?')) return;
+  const loan = loans.find(l=>l.id===loanId);
+  loan.status = 'lost';
+  const b = books.find(x=>x.id===loan.bookId);
+  if(b) b.status = 'lost';
+  renderLoans(); renderBooks(); updateStats();
+}
+
+/* Accounts */
+function createAccount(){
+  const name = document.getElementById('acct-name').value.trim();
+  const status = document.getElementById('acct-status').value;
+  if(!name) { alert('Name required'); return; }
+  const a = { id: idCounter++, name, status, notes:'' };
+  accounts.push(a);
+  document.getElementById('acct-name').value='';
+  closeForm('addAccount'); renderAccounts(); updateStats();
+}
+function toggleLock(id){
+  const a = accounts.find(x=>x.id===id);
+  a.status = a.status==='active' ? 'locked' : 'active';
+  renderAccounts(); updateStats();
+}
+function closeAccount(id){
+  if(!confirm('Close account?')) return;
+  const a = accounts.find(x=>x.id===id);
+  a.status = 'closed';
+  renderAccounts(); updateStats();
+}
+
+/* Helpers */
+function bookTitle(id){ const b = books.find(x=>x.id===id); return b?b.title:'-'; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]); }
+
+/* Page nav */
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    showPage(btn.dataset.page);
+  });
+});
+function showPage(p){
+  document.querySelectorAll('.page').forEach(s=> s.style.display='none');
+  const el = document.getElementById(p);
+  if(el) el.style.display='block';
+}
+
+/* seed */
+function seedSample(){
+  books = [
+    {id:idCounter++, title:'Introduction to Programming', callno:'QA76.6/001', status:'available'},
+    {id:idCounter++, title:'Data Structures', callno:'QA76.9/002', status:'loaned'},
+    {id:idCounter++, title:'Database Systems', callno:'QA76.9/003', status:'maintenance'}
+  ];
+  accounts = [
+    {id:idCounter++, name:'Nguyen Van A', status:'active', notes:''},
+    {id:idCounter++, name:'Tran Thi B', status:'locked', notes:'overdue fines'}
+  ];
+  loans = [
+    {id:idCounter++, bookId: books[1].id, reader:'Tran Thi B', due:'2025-11-01', status:'open'}
+  ];
+  renderAll();
+}
+
+/* small utilities */
+function renderAll(){ renderBooks(); renderLoans(); renderAccounts(); updateStats(); }
+function clearAll(){ if(!confirm('Clear all demo data?')) return; books=[];loans=[];accounts=[]; updateStats(); renderAll(); }
+renderAll();
+
+/* Keyboard: shortcut N to open New book form */
+document.addEventListener('keydown', e=>{
+  if(e.key.toLowerCase()==='n') openForm('addBook');
+});
+</script>
+</body>
+</html>
+
