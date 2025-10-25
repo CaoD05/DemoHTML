@@ -500,10 +500,24 @@ function removeBook(id){
 
 /* Loans */
 function startLoan(bookId){
-  openForm('addLoan');
-  document.getElementById('loan-book').value = bookId;
-  document.getElementById('loan-reader').focus();
+  const book = books.find(b => b.id === bookId);
+  if (!book) return alert("Book not found");
+
+  if (book.status === "loaned") {
+    alert("This book is already loaned!");
+    return;
+  }
+
+  // Change status
+  book.status = "loaned";
+
+  // Update display + statistics
+  renderBooks();
+  updateStats();
+
+  alert(`Book "${book.title}" is now marked as Loaned.`);
 }
+
 function createLoan(){
   const bookId = Number(document.getElementById('loan-book').value);
   const reader = document.getElementById('loan-reader').value.trim();
