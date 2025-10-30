@@ -494,12 +494,31 @@ function addBook(){
   closeForm('addBook');
   renderBooks(); updateStats();
 }
-function editBook(id){
-  const b = books.find(x=>x.id===id);
-  const newTitle = prompt('Edit title', b.title);
-  if(newTitle!==null) b.title = newTitle;
-  renderBooks(); updateStats();
+function editBook(id) {
+  const b = books.find(x => x.id === id);
+  if (!b) return alert("Book not found");
+
+  const newTitle = prompt("Edit title:", b.title);
+  if (newTitle === null) return; // user canceled
+
+  const newStatus = prompt(
+    "Edit status (available, loaned, maintenance, lost, retired):",
+    b.status
+  );
+  if (newStatus === null) return; // user canceled
+
+  const valid = ["available", "loaned", "maintenance", "lost", "retired"];
+  if (!valid.includes(newStatus.toLowerCase())) {
+    alert("Invalid status! Use one of: " + valid.join(", "));
+    return;
+  }
+
+  b.title = newTitle.trim();
+  b.status = newStatus.toLowerCase();
+  renderBooks();
+  updateStats();
 }
+
 function removeBook(id){
   if(!confirm('Delete this copy?')) return;
   books = books.filter(x=>x.id!==id);
