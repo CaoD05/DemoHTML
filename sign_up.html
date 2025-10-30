@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Sign Up</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f5f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .signup-box {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    width: 300px;
+  }
+  .signup-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0c7a5b;
+  }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    background: #10A37F;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #0e8d6c;
+  }
+  .login-link {
+    text-align: center;
+    margin-top: 15px;
+  }
+  .login-link a {
+    color: #0c7a5b;
+    text-decoration: none;
+  }
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="signup-box">
+  <h2>Create Account</h2>
+  <input type="text" id="newUsername" placeholder="Username">
+  <input type="password" id="newPassword" placeholder="Password">
+  <button onclick="signUp()">Sign Up</button>
+  <div class="login-link">
+    <p>Already have an account? <a href="index.html">Login</a></p>
+  </div>
+</div>
+
+<script>
+function signUp() {
+  // demo only — no storage
+  alert("Account created! Redirecting to login...");
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
