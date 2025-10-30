@@ -376,6 +376,14 @@ h1{font-size:16px;margin:0}
 </div>
 
 <script>
+// When the page loads, redirect back to login page
+window.onload = function() {
+  // Check if the page was reloaded
+  if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+    window.location.href = "index.html";
+  }
+};
+  
 /* ---------- Simple in-memory demo data & UI logic ---------- */
 let books = [];
 let loans = [];
