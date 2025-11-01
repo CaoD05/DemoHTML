@@ -20,7 +20,7 @@
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    width: 800px;
+    width: 850px;
     text-align: center;
   }
 
@@ -110,31 +110,33 @@
 </div>
 
 <script>
-  const user = localStorage.getItem("user_name");
-  document.getElementById("user").textContent = user || "Guest";
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = localStorage.getItem("user_name");
+    document.getElementById("user").textContent = user || "Guest";
 
-  const books = [
-    { title: "Naruto", category: "Action / Adventure", img: "https://upload.wikimedia.org/wikipedia/en/9/94/NarutoCoverTankobon1.jpg" },
-    { title: "Bleach", category: "Supernatural / Shonen", img: "https://upload.wikimedia.org/wikipedia/en/7/72/Bleach_cover_01.jpg" },
-    { title: "One Piece", category: "Adventure / Comedy", img: "https://upload.wikimedia.org/wikipedia/en/2/2c/OnePiece01Cover.jpg" },
-    { title: "Attack on Titan", category: "Action / Dark Fantasy", img: "https://upload.wikimedia.org/wikipedia/en/0/0c/Attack_on_Titan_volume_1_cover.jpg" },
-    { title: "Demon Slayer", category: "Action / Historical", img: "https://upload.wikimedia.org/wikipedia/en/f/f9/Kimetsu_no_Yaiba_Volume_1.jpg" },
-    { title: "My Hero Academia", category: "Superhero / Action", img: "https://upload.wikimedia.org/wikipedia/en/0/03/My_Hero_Academia_Volume_1.png" },
-  ];
+    const books = [
+      { title: "Naruto", category: "Action / Adventure", img: "https://m.media-amazon.com/images/I/81A7C1Cl5qL._AC_UF1000,1000_QL80_.jpg" },
+      { title: "Bleach", category: "Supernatural / Shonen", img: "https://m.media-amazon.com/images/I/71jUuMUbYUL._AC_UF1000,1000_QL80_.jpg" },
+      { title: "One Piece", category: "Adventure / Comedy", img: "https://m.media-amazon.com/images/I/81Tnq+yk5IL._AC_UF1000,1000_QL80_.jpg" },
+      { title: "Attack on Titan", category: "Action / Dark Fantasy", img: "https://m.media-amazon.com/images/I/81s1LSiQb5L._AC_UF1000,1000_QL80_.jpg" },
+      { title: "Demon Slayer", category: "Action / Historical", img: "https://m.media-amazon.com/images/I/81cn9zSroBL._AC_UF1000,1000_QL80_.jpg" },
+      { title: "My Hero Academia", category: "Superhero / Action", img: "https://m.media-amazon.com/images/I/81sU4uDJyyL._AC_UF1000,1000_QL80_.jpg" },
+    ];
 
-  const grid = document.getElementById("bookGrid");
+    const grid = document.getElementById("bookGrid");
 
-  books.forEach(book => {
-    const card = document.createElement("div");
-    card.className = "book-card";
-    card.innerHTML = `
-      <img src="${book.img}" alt="${book.title}">
-      <div class="book-title">${book.title}</div>
-      <div class="book-category">${book.category}</div>
-      <button>Borrow</button>
-    `;
-    card.querySelector("button").onclick = () => alert(\`You borrowed: ${book.title}\`);
-    grid.appendChild(card);
+    books.forEach(book => {
+      const card = document.createElement("div");
+      card.className = "book-card";
+      card.innerHTML = `
+        <img src="${book.img}" alt="${book.title}">
+        <div class="book-title">${book.title}</div>
+        <div class="book-category">${book.category}</div>
+        <button>Borrow</button>
+      `;
+      card.querySelector("button").onclick = () => alert(\`You borrowed: ${book.title}\`);
+      grid.appendChild(card);
+    });
   });
 
   function logout() {
