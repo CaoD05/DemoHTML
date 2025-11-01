@@ -96,7 +96,7 @@ function login() {
 
   if (user === savedUser && pass === savedPass) {
     alert('Welcome, ' + user + '!');
-    window.location.href('user_panel.html', '_blank');
+    window.location.href = 'user_panel.html';
   } else {
     errorMsg.textContent = 'Invalid username or password!';
   }
