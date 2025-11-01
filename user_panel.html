@@ -6,110 +6,138 @@
 <title>User Panel</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f2f5f7;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f7f8fa;
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background: #10A37F;
+    color: white;
+    padding: 15px 40px;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 40px 0;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .panel-box {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    width: 850px;
+  header h1 {
+    font-size: 22px;
+    margin: 0;
+  }
+
+  header a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  h2 {
     text-align: center;
-  }
-
-  .panel-box h2 {
     color: #0c7a5b;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
   }
 
-  .panel-box p {
-    font-size: 15px;
-    color: #444;
-    margin-bottom: 25px;
-  }
-
-  .book-grid {
+  .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
+    gap: 25px;
   }
 
-  .book-card {
-    background: #f8f9fa;
+  .card {
+    position: relative;
+    overflow: hidden;
     border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .book-card:hover {
+  .card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   }
 
-  .book-card img {
+  .card img {
     width: 100%;
-    height: 220px;
+    height: 260px;
     object-fit: cover;
-    border-radius: 6px;
+    display: block;
   }
 
-  .book-title {
-    font-weight: bold;
-    margin: 8px 0 4px;
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  .book-category {
+  .card:hover .overlay {
+    opacity: 1;
+  }
+
+  .overlay h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .overlay span {
     font-size: 13px;
-    color: #10A37F;
-    margin-bottom: 8px;
+    opacity: 0.8;
   }
 
-  button {
+  footer {
+    text-align: center;
+    margin: 50px 0 20px;
+    font-size: 14px;
+  }
+
+  .borrow-btn {
+    display: inline-block;
     background: #10A37F;
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 6px 12px;
+    padding: 5px 10px;
+    margin-top: 8px;
     cursor: pointer;
     transition: 0.2s ease;
   }
 
-  button:hover {
+  .borrow-btn:hover {
     background: #0e8d6c;
-  }
-
-  .logout {
-    margin-top: 25px;
-    color: #10A37F;
-    text-decoration: none;
-    font-size: 14px;
-    display: inline-block;
-  }
-
-  .logout:hover {
-    text-decoration: underline;
   }
 </style>
 </head>
 <body>
 
-<div class="panel-box">
-  <h2>Welcome, <span id="user"></span>!</h2>
-  <p>Choose your favorite manga to borrow:</p>
+<header>
+  <h1>Manga Library</h1>
+  <a href="index.html" onclick="logout()">Log out</a>
+</header>
 
-  <div class="book-grid" id="bookGrid"></div>
+<main>
+  <h2>Welcome, <span id="user"></span>! Explore Manga</h2>
+  <div class="grid" id="bookGrid"></div>
+</main>
 
-  <a href="index.html" class="logout" onclick="logout()">Log out</a>
-</div>
+<footer>© 2025 Manga Library Demo</footer>
 
+<!-- External JS -->
 <script src="user_panel.js" defer></script>
-
 </body>
 </html>
