@@ -1,31 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>User Panel</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Panel</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f5f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .panel-box {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    width: 350px;
+    text-align: center;
+  }
+
+  .panel-box h2 {
+    color: #0c7a5b;
+    margin-bottom: 10px;
+  }
+
+  .panel-box p {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 20px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+
+  button {
+    background: #10A37F;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  button:hover {
+    background: #0e8d6c;
+  }
+
+  .logout {
+    margin-top: 20px;
+    color: #10A37F;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-block;
+  }
+
+  .logout:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
+
+<div class="panel-box">
   <h2>Welcome, <span id="user"></span>!</h2>
-  <p>This is your user panel. You can select books to loan here.</p>
+  <p>Select a book below to borrow:</p>
 
   <ul id="bookList"></ul>
 
-  <script>
-    const user = localStorage.getItem("user_name");
-    document.getElementById("user").textContent = user || "Guest";
+  <a href="login.html" class="logout" onclick="logout()">Log out</a>
+</div>
 
-    const books = ["Book A", "Book B", "Book C"];
-    const list = document.getElementById("bookList");
+<script>
+  const user = localStorage.getItem("user_name");
+  document.getElementById("user").textContent = user || "Guest";
 
-    books.forEach(b => {
-      const li = document.createElement("li");
-      li.textContent = b + " ";
-      const btn = document.createElement("button");
-      btn.textContent = "Borrow";
-      btn.onclick = () => alert("You borrowed: " + b);
-      li.appendChild(btn);
-      list.appendChild(li);
-    });
-  </script>
+  const books = ["Book A", "Book B", "Book C", "Book D"];
+  const list = document.getElementById("bookList");
+
+  books.forEach(book => {
+    const li = document.createElement("li");
+    li.textContent = book;
+    const btn = document.createElement("button");
+    btn.textContent = "Borrow";
+    btn.onclick = () => alert(`You borrowed: ${book}`);
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+
+  function logout() {
+    alert("You have logged out.");
+  }
+</script>
+
 </body>
 </html>
