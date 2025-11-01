@@ -36,22 +36,16 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const grid = document.getElementById("bookGrid");
-
   books.forEach(book => {
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = "book-card";
     card.innerHTML = `
       <img src="${book.img}" alt="${book.title}">
-      <div class="overlay">
-        <h3>${book.title}</h3>
-        <span>${book.category}</span><br>
-        <button class="borrow-btn">Borrow</button>
-      </div>
+      <div class="book-title">${book.title}</div>
+      <div class="book-category">${book.category}</div>
+      <button>Borrow</button>
     `;
-    card.querySelector(".borrow-btn").onclick = (e) => {
-      e.stopPropagation();
-      alert(\`You borrowed: ${book.title}\`);
-    };
+    card.querySelector("button").onclick = () => alert(`You borrowed: ${book.title}`);
     grid.appendChild(card);
   });
 });
