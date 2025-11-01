@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>User Panel</title>
+</head>
+<body>
+  <h2>Welcome, <span id="user"></span>!</h2>
+  <p>This is your user panel. You can select books to loan here.</p>
+
+  <ul id="bookList"></ul>
+
+  <script>
+    const user = localStorage.getItem("user_name");
+    document.getElementById("user").textContent = user || "Guest";
+
+    const books = ["Book A", "Book B", "Book C"];
+    const list = document.getElementById("bookList");
+
+    books.forEach(b => {
+      const li = document.createElement("li");
+      li.textContent = b + " ";
+      const btn = document.createElement("button");
+      btn.textContent = "Borrow";
+      btn.onclick = () => alert("You borrowed: " + b);
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+  </script>
+</body>
+</html>
